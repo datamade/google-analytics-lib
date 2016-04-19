@@ -1,32 +1,42 @@
 /*!
- * Google Analytics Library
- * https://github.com/open-city/google-analytics-lib
+ * Google Analytics Library v2
+ * Upgraded for Universal Analytics
  *
- * Copyright 2012, Nick Rougeux and Derek Eder of Open City
+ * Copyright 2016, Derek Eder of DataMade
  * Licensed under the MIT license.
- * https://github.com/open-city/google-analytics-lib/wiki/License
+ * Based on Google Analytics Library by Nick Rougeaux and Derek Eder from Open City
  *
- * Date: 5/9/2012
+ * Date: 4/19/2016
  *
  */
 
-var analyticsTrackingCode = 'UA-xxxxxxxx-1'; //enter your tracking code here
+var analyticsTrackingCode = 'UA-76604743-1'; //enter your tracking code here
 
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', analyticsTrackingCode]);
-_gaq.push(['_trackPageview']);
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-(function() {
-var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
+ga('create', analyticsTrackingCode, 'auto');
+ga('send', 'pageview');
 
-_trackClickEventWithGA = function (category, action, label) {
-	if (typeof(_gaq) != 'undefined')
-    _gaq.push(['_setAccount', analyticsTrackingCode]);
-		_gaq.push(['_trackEvent', category, action, label]);
-};
+function handleOutboundLinkClicks(href) {
+  ga('send', 'event', {
+    eventCategory: 'Outbound Link',
+    eventAction: 'click',
+    eventLabel: href,
+    transport: 'beacon'
+  });
+}
+
+function _trackClickEventWithGA(category, action, label) {
+  ga('send', {
+	  hitType: 'event',
+	  eventCategory: category,
+	  eventAction: action,
+	  eventLabel: label
+	});
+}
 
 jQuery(function () {
 
@@ -36,7 +46,7 @@ jQuery(function () {
 
 		//links going to outside sites
 		if (href.match(/^http/i) && !href.match(document.domain)) {
-			_trackClickEventWithGA("Outgoing", "Click", href);
+			handleOutboundLinkClicks(href);
 		}
 
 		//direct links to files
@@ -48,9 +58,5 @@ jQuery(function () {
 		if (href.match(/^mailto:/i)) {
 			_trackClickEventWithGA("Emails", "Click", href);
 		}
-    //uncomment if you want to track #hash values
-    //$(window).hashchange( function(){
-    //  _gaq.push(['_trackPageview',location.pathname + location.search  + location.hash]);
-    //});
 	});
 });
